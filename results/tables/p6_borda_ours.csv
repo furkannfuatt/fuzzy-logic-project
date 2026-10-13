@@ -1,0 +1,17 @@
+system,accuracy,rules,nauck,accuracy_rank,rules_rank,rank_sum,tradeoff_rank,yöntem,nauck_rank
+Grid-ANFIS (2MF),92.98245614035088,16.0,0.0066106895706833,1,3,4,1,makale (acc+kural),
+Grid + sadeleştirme (FCM yok),91.22807017543859,9.0,0.012553603076368098,3,2,5,2,makale (acc+kural),
+FCM-ANFIS (yalnız FCM),91.06858054226475,4.0,0.02442594089017814,4,1,5,2,makale (acc+kural),
+C-ANFIS,90.35087719298245,4.0,0.04435199482144161,5,1,6,3,makale (acc+kural),
+Grid-ANFIS (3MF),92.04260651629073,81.0,0.0011591059880663,2,5,7,4,makale (acc+kural),
+FCM + birleştirme,90.35087719298245,4.0,0.027538213139624096,6,1,7,4,makale (acc+kural),
+FCM + birleştirme + önemsiz koşul,90.35087719298245,4.0,0.02949496374090903,7,1,8,5,makale (acc+kural),
+Wang-Mendel (3MF),86.66666666666667,18.0,0.0138888888888888,8,4,12,6,makale (acc+kural),
+C-ANFIS,90.35087719298245,4.0,0.04435199482144161,5,1,7,1,genişletilmiş (+Nauck),1.0
+FCM-ANFIS (yalnız FCM),91.06858054226475,4.0,0.02442594089017814,4,1,9,2,genişletilmiş (+Nauck),4.0
+FCM + birleştirme,90.35087719298245,4.0,0.027538213139624096,6,1,10,3,genişletilmiş (+Nauck),3.0
+FCM + birleştirme + önemsiz koşul,90.35087719298245,4.0,0.02949496374090903,7,1,10,3,genişletilmiş (+Nauck),2.0
+Grid-ANFIS (2MF),92.98245614035088,16.0,0.0066106895706833,1,3,11,4,genişletilmiş (+Nauck),7.0
+Grid + sadeleştirme (FCM yok),91.22807017543859,9.0,0.012553603076368098,3,2,11,4,genişletilmiş (+Nauck),6.0
+Grid-ANFIS (3MF),92.04260651629073,81.0,0.0011591059880663,2,5,15,5,genişletilmiş (+Nauck),8.0
+Wang-Mendel (3MF),86.66666666666667,18.0,0.0138888888888888,8,4,17,6,genişletilmiş (+Nauck),5.0

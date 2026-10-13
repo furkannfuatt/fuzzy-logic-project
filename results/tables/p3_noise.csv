@@ -1,0 +1,73 @@
+dataset,model,noise,accuracy
+iris,C-ANFIS,0.0,94.0
+iris,C-ANFIS,0.05,90.67
+iris,C-ANFIS,0.1,88.67
+iris,C-ANFIS,0.2,78.0
+iris,Grid-ANFIS (2MF),0.0,95.33
+iris,Grid-ANFIS (2MF),0.05,93.33
+iris,Grid-ANFIS (2MF),0.1,92.0
+iris,Grid-ANFIS (2MF),0.2,72.0
+iris,Grid-ANFIS (3MF),0.0,94.67
+iris,Grid-ANFIS (3MF),0.05,93.33
+iris,Grid-ANFIS (3MF),0.1,86.67
+iris,Grid-ANFIS (3MF),0.2,74.67
+iris,Karar Ağacı (d≤4),0.0,94.0
+iris,Karar Ağacı (d≤4),0.05,92.0
+iris,Karar Ağacı (d≤4),0.1,90.0
+iris,Karar Ağacı (d≤4),0.2,71.33
+iris,MLP,0.0,96.0
+iris,MLP,0.05,95.33
+iris,MLP,0.1,93.33
+iris,MLP,0.2,79.33
+iris,Wang-Mendel (3MF),0.0,91.33
+iris,Wang-Mendel (3MF),0.05,92.67
+iris,Wang-Mendel (3MF),0.1,89.33
+iris,Wang-Mendel (3MF),0.2,79.33
+pima,C-ANFIS,0.0,74.74
+pima,C-ANFIS,0.05,73.7
+pima,C-ANFIS,0.1,72.0
+pima,C-ANFIS,0.2,62.89
+pima,Grid-ANFIS (2MF),0.0,74.87
+pima,Grid-ANFIS (2MF),0.05,73.44
+pima,Grid-ANFIS (2MF),0.1,71.75
+pima,Grid-ANFIS (2MF),0.2,62.9
+pima,Grid-ANFIS (3MF),0.0,69.4
+pima,Grid-ANFIS (3MF),0.05,72.79
+pima,Grid-ANFIS (3MF),0.1,64.72
+pima,Grid-ANFIS (3MF),0.2,58.46
+pima,Karar Ağacı (d≤4),0.0,74.35
+pima,Karar Ağacı (d≤4),0.05,74.21
+pima,Karar Ağacı (d≤4),0.1,69.27
+pima,Karar Ağacı (d≤4),0.2,63.28
+pima,MLP,0.0,76.96
+pima,MLP,0.05,76.83
+pima,MLP,0.1,73.7
+pima,MLP,0.2,66.15
+pima,Wang-Mendel (3MF),0.0,74.48
+pima,Wang-Mendel (3MF),0.05,74.35
+pima,Wang-Mendel (3MF),0.1,70.44
+pima,Wang-Mendel (3MF),0.2,62.89
+wdbc,C-ANFIS,0.0,92.79
+wdbc,C-ANFIS,0.05,84.18
+wdbc,C-ANFIS,0.1,73.81
+wdbc,C-ANFIS,0.2,60.27
+wdbc,Grid-ANFIS (2MF),0.0,93.85
+wdbc,Grid-ANFIS (2MF),0.05,84.34
+wdbc,Grid-ANFIS (2MF),0.1,76.08
+wdbc,Grid-ANFIS (2MF),0.2,66.23
+wdbc,Grid-ANFIS (3MF),0.0,92.62
+wdbc,Grid-ANFIS (3MF),0.05,85.93
+wdbc,Grid-ANFIS (3MF),0.1,79.27
+wdbc,Grid-ANFIS (3MF),0.2,65.53
+wdbc,Karar Ağacı (d≤4),0.0,92.09
+wdbc,Karar Ağacı (d≤4),0.05,88.4
+wdbc,Karar Ağacı (d≤4),0.1,83.14
+wdbc,Karar Ağacı (d≤4),0.2,69.23
+wdbc,MLP,0.0,93.85
+wdbc,MLP,0.05,94.02
+wdbc,MLP,0.1,91.74
+wdbc,MLP,0.2,83.83
+wdbc,Wang-Mendel (3MF),0.0,91.57
+wdbc,Wang-Mendel (3MF),0.05,91.04
+wdbc,Wang-Mendel (3MF),0.1,88.93
+wdbc,Wang-Mendel (3MF),0.2,81.37

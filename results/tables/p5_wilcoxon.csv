@@ -1,0 +1,14 @@
+veri,karşılaştırma,n_kat,ort_fark_puan,p_değeri,anlamlı_(α=0.05)
+iris,C-ANFIS vs Grid-ANFIS (2MF),10,-1.33,0.6875,hayır
+iris,C-ANFIS vs Grid-ANFIS (3MF),10,-0.67,0.375,hayır
+iris,C-ANFIS vs FCM-ANFIS (yalnız FCM),10,-0.67,0.75,hayır
+wdbc,C-ANFIS vs Grid-ANFIS (2MF),10,-1.06,0.0859,hayır
+wdbc,C-ANFIS vs Grid-ANFIS (3MF),10,0.17,0.8281,hayır
+wdbc,C-ANFIS vs FCM-ANFIS (yalnız FCM),10,-0.36,0.8438,hayır
+pima,C-ANFIS vs Grid-ANFIS (2MF),10,-0.13,0.8828,hayır
+pima,C-ANFIS vs Grid-ANFIS (3MF),10,5.34,0.0215,evet
+pima,C-ANFIS vs FCM-ANFIS (yalnız FCM),10,0.65,0.3125,hayır
+TÜMÜ,C-ANFIS vs Grid-ANFIS (2MF),30,-0.84,0.152,hayır
+TÜMÜ,C-ANFIS vs Grid-ANFIS (3MF),30,1.61,0.0831,hayır
+TÜMÜ,C-ANFIS vs FCM-ANFIS (yalnız FCM),30,-0.12,0.7866,hayır
+TÜMÜ (σ=0.1 gürültü),C-ANFIS vs Grid-ANFIS (2MF),30,-1.79,0.2053,hayır

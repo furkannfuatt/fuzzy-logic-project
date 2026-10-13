@@ -1,0 +1,33 @@
+veri,ölçüt,baseline,C-ANFIS,değişim_%
+iris,Accuracy (%),95.3333,94.0,-1.4
+iris,Macro-F1 (%),95.2441,93.9108,-1.4
+iris,Kural sayısı,16.0,4.5,-71.9
+iris,Toplam kural uzunluğu,64.0,17.4,-72.8
+iris,MF sayısı,8.0,15.4,92.5
+iris,Nauck indeksi,0.0063,0.0455,625.3
+iris,Eğitim süresi (s),0.0629,0.0641,1.8
+iris,Çıkarım (ms/örnek),0.0076,0.0054,-28.7
+wdbc,Accuracy (%),93.8471,92.7882,-1.1
+wdbc,Macro-F1 (%),93.4149,92.2116,-1.3
+wdbc,Kural sayısı,16.0,3.5,-78.1
+wdbc,Toplam kural uzunluğu,64.0,14.0,-78.1
+wdbc,MF sayısı,8.0,13.0,62.5
+wdbc,Nauck indeksi,0.0067,0.0419,526.7
+wdbc,Eğitim süresi (s),0.1342,0.103,-23.2
+wdbc,Çıkarım (ms/örnek),0.0031,0.0018,-41.0
+pima,Accuracy (%),74.8735,74.7437,-0.2
+pima,Macro-F1 (%),71.4305,71.5223,0.1
+pima,Kural sayısı,16.0,3.5,-78.1
+pima,Toplam kural uzunluğu,64.0,13.1,-79.5
+pima,MF sayısı,8.0,11.9,48.8
+pima,Nauck indeksi,0.0076,0.051,569.2
+pima,Eğitim süresi (s),0.1658,0.1342,-19.1
+pima,Çıkarım (ms/örnek),0.0029,0.0018,-37.5
+TÜMÜ,Accuracy (%),88.018,87.1773,-1.0
+TÜMÜ,Macro-F1 (%),86.6965,85.8816,-0.9
+TÜMÜ,Kural sayısı,16.0,3.8333,-76.0
+TÜMÜ,Toplam kural uzunluğu,64.0,14.8333,-76.8
+TÜMÜ,MF sayısı,8.0,13.4333,67.9
+TÜMÜ,Nauck indeksi,0.0069,0.0462,572.5
+TÜMÜ,Eğitim süresi (s),0.121,0.1004,-17.0
+TÜMÜ,Çıkarım (ms/örnek),0.0045,0.003,-33.3

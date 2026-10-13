@@ -1,0 +1,25 @@
+C-ANFIS kuralları (WDBC, tek bölünme)
+R1: EĞER mean concave points Düşük VE worst perimeter Düşük VE worst area Düşük VE worst concave points Düşük İSE sınıf ≈ benign   [kapsama=0.61]
+R2: EĞER mean concave points Yüksek VE worst perimeter Yüksek VE worst area Yüksek VE worst concave points Yüksek İSE sınıf ≈ malignant   [kapsama=0.32]
+R3: EĞER mean concave points Orta VE worst perimeter Düşük VE worst area Orta VE worst concave points Orta İSE sınıf ≈ benign   [kapsama=0.07]
+
+Test doğruluğu C-ANFIS: 93.57%
+Test doğruluğu Grid-ANFIS: 92.98%
+
+Grid-ANFIS kuralları (ilk 16)
+R1: EĞER mean concave points Düşük VE worst perimeter Düşük VE worst area Düşük VE worst concave points Düşük İSE sınıf ≈ benign   [kapsama=0.53]
+R2: EĞER mean concave points Düşük VE worst perimeter Düşük VE worst area Düşük VE worst concave points Yüksek İSE sınıf ≈ malignant   [kapsama=0.03]
+R3: EĞER mean concave points Düşük VE worst perimeter Düşük VE worst area Yüksek VE worst concave points Düşük İSE sınıf ≈ malignant   [kapsama=0.01]
+R4: EĞER mean concave points Düşük VE worst perimeter Düşük VE worst area Yüksek VE worst concave points Yüksek İSE sınıf ≈ malignant   [kapsama=0.01]
+R5: EĞER mean concave points Düşük VE worst perimeter Yüksek VE worst area Düşük VE worst concave points Düşük İSE sınıf ≈ benign   [kapsama=0.00]
+R6: EĞER mean concave points Düşük VE worst perimeter Yüksek VE worst area Düşük VE worst concave points Yüksek İSE sınıf ≈ benign   [kapsama=0.00]
+R7: EĞER mean concave points Düşük VE worst perimeter Yüksek VE worst area Yüksek VE worst concave points Düşük İSE sınıf ≈ malignant   [kapsama=0.01]
+R8: EĞER mean concave points Düşük VE worst perimeter Yüksek VE worst area Yüksek VE worst concave points Yüksek İSE sınıf ≈ malignant   [kapsama=0.00]
+R9: EĞER mean concave points Yüksek VE worst perimeter Düşük VE worst area Düşük VE worst concave points Düşük İSE sınıf ≈ malignant   [kapsama=0.03]
+R10: EĞER mean concave points Yüksek VE worst perimeter Düşük VE worst area Düşük VE worst concave points Yüksek İSE sınıf ≈ benign   [kapsama=0.07]
+R11: EĞER mean concave points Yüksek VE worst perimeter Düşük VE worst area Yüksek VE worst concave points Düşük İSE sınıf ≈ malignant   [kapsama=0.01]
+R12: EĞER mean concave points Yüksek VE worst perimeter Düşük VE worst area Yüksek VE worst concave points Yüksek İSE sınıf ≈ malignant   [kapsama=0.02]
+R13: EĞER mean concave points Yüksek VE worst perimeter Yüksek VE worst area Düşük VE worst concave points Düşük İSE sınıf ≈ benign   [kapsama=0.00]
+R14: EĞER mean concave points Yüksek VE worst perimeter Yüksek VE worst area Düşük VE worst concave points Yüksek İSE sınıf ≈ malignant   [kapsama=0.01]
+R15: EĞER mean concave points Yüksek VE worst perimeter Yüksek VE worst area Yüksek VE worst concave points Düşük İSE sınıf ≈ malignant   [kapsama=0.01]
+R16: EĞER mean concave points Yüksek VE worst perimeter Yüksek VE worst area Yüksek VE worst concave points Yüksek İSE sınıf ≈ malignant   [kapsama=0.26]
