@@ -97,7 +97,12 @@ python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\
 pip install -r requirements.txt
 ```
 
-Test edilen ortam: Python 3.13, numpy 2.5, scipy 1.18, pandas 3.0, scikit-learn 1.9, matplotlib 3.11, streamlit 1.65. Python ≥ 3.10 ile de çalışır. GPU gerekmez.
+Test edilen ortamlar:
+
+- Python 3.13, numpy 2.5, scipy 1.18, pandas 3.0, scikit-learn 1.9, matplotlib 3.11, streamlit 1.65 (raporlanan sonuçlar bu ortamda üretildi).
+- Python 3.10, numpy 2.2, scikit-learn 1.7, pandas 2.3 (macOS üzerinde Linux VM): testler ve R1 birebir aynı sonucu verdi. C-ANFIS doğruluğu kütüphane sürümü farkından dolayı ±0,2 puan oynayabilir (ör. WDBC: 92,79 → 92,97). Grid-ANFIS sonuçları birebir aynı çıktı.
+
+GPU gerekmez. Süre ölçümleri donanıma bağlıdır.
 
 ## How to Run
 
