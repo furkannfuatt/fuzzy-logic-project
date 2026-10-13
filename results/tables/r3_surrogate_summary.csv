@@ -1,0 +1,16 @@
+dataset,model,fidelity,fidelity_std,accuracy,rules
+iris,C-ANFIS,99.33,2.11,94.67,5.0
+iris,Grid-ANFIS (2MF),95.33,4.5,94.67,16.0
+iris,Karar Ağacı (d≤4),94.67,6.13,94.0,7.0
+iris,MLP (black-box),100.0,0.0,95.33,
+iris,Wang-Mendel (3MF),90.67,7.17,91.33,16.0
+pima,C-ANFIS,79.54,6.2,75.0,3.5
+pima,Grid-ANFIS (2MF),79.03,6.0,75.52,16.0
+pima,Karar Ağacı (d≤4),76.95,3.46,73.18,16.0
+pima,MLP (black-box),100.0,0.0,71.22,
+pima,Wang-Mendel (3MF),77.08,5.5,74.61,22.5
+wdbc,C-ANFIS,92.61,3.22,92.79,4.0
+wdbc,Grid-ANFIS (2MF),93.32,1.83,93.85,16.0
+wdbc,Karar Ağacı (d≤4),91.56,3.5,92.09,14.0
+wdbc,MLP (black-box),100.0,0.0,97.71,
+wdbc,Wang-Mendel (3MF),91.04,4.41,91.57,18.0

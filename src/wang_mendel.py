@@ -6,8 +6,12 @@ IEEE Trans. SMC, 22(6), 1992.
 Adımlar:
  1) Her girişi p adet üçgen MF ile eşit böl (Düşük / Orta / Yüksek ...).
  2) Her örnek için, her öznitelikte en yüksek üyelikli MF seçilir -> aday kural.
- 3) Kural derecesi = üyeliklerin çarpımı. Aynı öncüle sahip çakışan kurallarda
-    en yüksek dereceli kural tutulur (sınıf = o kuralın sınıfı).
+ 3) Kural derecesi = üyeliklerin çarpımı. Aynı öncüle sahip çakışan kurallar:
+    - conflict="max" (orijinal WM): en yüksek dereceli örneğin sınıfı seçilir;
+    - conflict="sum" (varsayılan): her sınıf için derece toplamı alınır, en büyüğü
+      seçilir (Ishibuchi vd. 1992 tarzı sınıflandırma sezgisi). Orijinal "max" kuralı,
+      sınıfların çakıştığı yoğun hücrelerde tek bir (olası gürültülü) örneğe bağlı
+      kaldığından Pima'da çoğunluk sınıfının altında doğruluk vermiştir (bkz. rapor).
  4) Çıkarım: "tek kazanan kural" (single winner) — en yüksek ateşleme kuvvetli
     kuralın sınıfı atanır (Mamdani/klasik bulanık sınıflandırıcı çıkarımı).
 
@@ -27,20 +31,24 @@ def tri_memberships(X: np.ndarray, n_mfs: int) -> np.ndarray:
 
 
 class WangMendelClassifier:
-    def __init__(self, n_mfs: int = 3, feature_names=None, class_names=None):
-        self.n_mfs = n_mfs
+    def __init__(self, n_mfs: int = 3, conflict: str = "sum", feature_names=None, class_names=None):
+        self.n_mfs, self.conflict = n_mfs, conflict
         self.feature_names, self.class_names = feature_names, class_names
 
     def fit(self, X, y):
         mu = tri_memberships(X, self.n_mfs)
         best_mf = mu.argmax(axis=2)                       # (n, d)
         degree = mu.max(axis=2).prod(axis=1)               # (n,)
-        table: dict[tuple, tuple[float, int]] = {}
+        K = int(y.max()) + 1
+        table: dict[tuple, np.ndarray] = {}
         for ant, deg, cls in zip(map(tuple, best_mf), degree, y):
-            if ant not in table or deg > table[ant][0]:
-                table[ant] = (deg, int(cls))
+            acc = table.setdefault(ant, np.zeros(K))
+            if self.conflict == "max":      # orijinal WM: en yüksek dereceli örnek kazanır
+                acc[cls] = max(acc[cls], deg)
+            else:                           # "sum": sınıf başına derece toplamı (Ishibuchi tipi)
+                acc[cls] += deg
         self.antecedents = np.array(list(table.keys()), dtype=int)
-        self.consequents = np.array([v[1] for v in table.values()], dtype=int)
+        self.consequents = np.array([v.argmax() for v in table.values()], dtype=int)
         self.default_class = int(np.bincount(y).argmax())
         return self
 

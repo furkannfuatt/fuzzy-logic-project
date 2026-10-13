@@ -1,0 +1,6 @@
+kaynak,medyan_doğruluk,min_doğruluk,maks_doğruluk,medyan_kural
+"Makale (Tablo 9/6, 19 çalışmanın medyanı)",95.0,78.0,99.9,17
+"Bizim Grid-ANFIS (2MF), 3 veri × 10 kat",92.98,66.23,100.0,16
+  └ iris,93.33,86.67,100.0,16
+  └ wdbc,92.98,91.23,98.25,16
+  └ pima,72.73,66.23,87.01,16
