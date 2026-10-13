@@ -1,0 +1,21 @@
+system,accuracy,rules,accuracy_rank,rules_rank,rank_sum,tradeoff_rank,paper_acc_rank,paper_rules_rank,paper_tradeoff_rank,match
+GFS,99.0,3.2,1,1,2,1,1,1,1,True
+Dynamic FRI,93.5,11.5,3,6,9,2,3,6,2,True
+SOFNN,91.4,9.0,6,3,9,2,6,3,2,True
+FMM,90.55,6.5,7,2,9,2,7,2,2,True
+ANFIS,95.0,17.0,2,8,10,3,2,8,3,True
+Evolving FNN,92.0,13.0,5,7,12,4,5,7,4,True
+CFC,93.5,28.0,4,11,15,5,4,11,5,True
+POPFNN,88.55,13.0,9,7,16,6,9,7,6,True
+Fuzzy SVM,87.0,10.0,12,4,16,6,12,4,6,True
+FCM (cognitive map),87.25,17.0,11,8,19,7,11,8,7,True
+IT2FLS,90.0,40.0,8,13,21,8,8,13,8,True
+TSK FNN,87.67,28.0,10,11,21,8,10,11,8,True
+Fuzzy C-means,84.31,25.0,13,10,23,9,13,10,9,True
+FURIA,65.44,10.0,19,4,23,9,19,4,9,True
+Fuzzy ART/ARTMAP,82.1,25.0,15,10,25,10,15,10,10,True
+NEFCLASS,76.75,21.5,16,9,25,10,16,9,10,True
+FRI,11.0,11.0,20,5,25,10,20,5,10,True
+Monotone FRI,82.5,58.0,14,14,28,11,14,14,11,True
+DENFIS,75.25,34.135,17,12,29,12,17,12,12,True
+Zero-order TSK,73.34,82.135,18,15,33,13,18,15,13,True

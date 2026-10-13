@@ -1,0 +1,5 @@
+senaryo,ilk_2_sira,ANFIS_tradeoff_rank
+"Makale (acc=ordinal, rules=dense, total=dense)","GFS, Dynamic FRI, SOFNN, FMM",3
+Tutarlı: hepsi 'min' (standart yarışma sırası),"GFS, SOFNN, FMM",5
+Tutarlı: hepsi 'average',"GFS, SOFNN, FMM",4
+FRI hariç (şüpheli veri),"GFS, Dynamic FRI",3
