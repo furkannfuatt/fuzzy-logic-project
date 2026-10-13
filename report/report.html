@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Bulanık Mantık Dönem Projesi — Teknik Rapor</title>
+<style>
+  @page { size: A4; }
+  html { font-family: "Times New Roman", "Liberation Serif", "DejaVu Serif", serif; font-size: 10.6pt; color: #111; }
+  body { margin: 0; line-height: 1.38; text-align: justify; hyphens: auto; }
+  h1 { font-size: 16.5pt; text-align: center; margin: 0 0 6pt; line-height: 1.2; }
+  .sub { text-align: center; font-size: 10pt; margin: 0 0 2pt; }
+  .abstract { border-top: 1px solid #999; border-bottom: 1px solid #999; padding: 6pt 0; margin: 10pt 0 8pt; font-size: 9.8pt; }
+  h2 { font-size: 12.2pt; margin: 13pt 0 4pt; page-break-after: avoid; }
+  h3 { font-size: 10.8pt; margin: 9pt 0 3pt; page-break-after: avoid; font-style: italic; }
+  p { margin: 0 0 5pt; }
+  .eq { text-align: center; margin: 5pt 0; font-style: italic; }
+  .eq span.n { float: right; font-style: normal; }
+  figure { margin: 7pt 0; text-align: center; page-break-inside: avoid; }
+  figure img { width: 100%; }
+  figcaption { font-size: 9pt; text-align: left; margin-top: 2pt; }
+  table { border-collapse: collapse; margin: 5pt auto; font-size: 8.9pt; page-break-inside: avoid; }
+  th, td { border-top: 1px solid #bbb; border-bottom: 1px solid #bbb; padding: 2pt 5pt; text-align: center; }
+  th { background: #f0f0f0; }
+  td.l, th.l { text-align: left; }
+  .cap { font-size: 9pt; text-align: center; margin: 6pt 0 2pt; font-weight: bold; }
+  ol.refs { font-size: 8.9pt; padding-left: 20pt; }
+  ol.refs li { margin-bottom: 2pt; }
+  ul { margin: 2pt 0 5pt 0; padding-left: 16pt; }
+  li { margin-bottom: 1.5pt; }
+  .box { border: 1px solid #aaa; background: #fafafa; padding: 5pt 8pt; font-size: 9.6pt; margin: 6pt 0; }
+  code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.8pt; }
+  .pb { page-break-before: always; }
+  b.g { color: #1b5e20; } b.r { color: #a61b1b; }
+</style>
+</head>
+<body>
+
+<h1>Bulanık Mantık Tabanlı Yorumlanabilirlik: ANFIS'in Yeniden Gerçekleştirilmesi ve Kompakt C-ANFIS ile Kural Patlamasının Azaltılması</h1>
+<p class="sub"><b>Furkan Fuat Küçükbayrak</b> (1306230124) — İstanbul Üniversitesi-Cerrahpaşa, Bilgisayar Mühendisliği</p>
+<p class="sub">Bulanık Mantık Dersi Dönem Projesi, 2026–2027 Güz · Ders sorumlusu: Tolgahan Öztürk</p>
+<p class="sub">Referans çalışma: H. Ouifak, A. Idri, <i>Neurocomputing</i> 647 (2025) 130602 [1]</p>
+
+<div class="abstract"><b>Özet—</b>Referans çalışma [1], 1994–2024 arasında yayımlanmış 330 çalışmayı inceleyen ve bulanık mantığın (BM) kara kutu makine öğrenmesi (MÖ) modellerini yorumlanabilir kılmadaki rolünü değerlendiren sistematik bir derlemedir. Derlemenin başlıca bulguları şunlardır: (i) en sık kullanılan bulanık teknik ANFIS'tir (medyan %95 doğruluk, 17 kural); (ii) yorumlanabilirlik çoğunlukla kural sayısıyla ölçülür; (iii) performans–yorumlanabilirlik dengesi Borda sayımıyla sıralanmıştır; (iv) temel sınırlılıklar kural patlaması, ölçeklenebilirlik ve standart yorumlanabilirlik metriklerinin eksikliğidir. Bu projede önce derlemenin nicel analizi yeniden üretilmiştir: Borda sıralaması (Şekil 21) 20 sistemin 20'sinde birebir elde edilmiş, ayrıca bağ (tie) politikasındaki tutarsızlık ve olası bir tablo hatası tespit edilmiştir. Ardından ANFIS sıfırdan (NumPy) gerçekleştirilmiş, üç benchmark veri setinde (Iris, WDBC, Pima) 10-kat çapraz doğrulamayla değerlendirilmiş ve bir MLP kara kutusunu açıklayan bulanık vekil (surrogate) modellerin fidelity değerleri ölçülmüştür. Özgün katkı olarak, sınıf-bazlı Fuzzy C-Means ile kural üretimi, Jaccard benzerliğine dayalı MF birleştirme, önemsiz koşul kaldırma ve kural budamayı birleştiren <b>C-ANFIS</b> önerilmiştir. C-ANFIS, grid-partition ANFIS'e göre kural sayısını %76, toplam kural uzunluğunu %77 azaltmış, Nauck yorumlanabilirlik indeksini ≈6,7 kat artırmış; doğruluktaki −0,84 puanlık fark istatistiksel olarak anlamlı bulunmamıştır (Wilcoxon, p = 0,15). Girdi sayısı 8'e çıktığında grid ANFIS 256 kurala ve ≈21 s eğitim süresine ulaşırken C-ANFIS 3–4 kural ve ≈0,15 s ile çalışmış, Pima'da doğruluk avantajı 8,1 puana çıkmıştır. Gürültüye dayanıklılıkta iyileşme gözlenmemiş; bu olumsuz sonuç da tartışılmıştır.</div>
+
+<h2>1. Giriş (Introduction)</h2>
+<p>Derin öğrenme ve diğer kara kutu MÖ modelleri tıp, finans ve otonom sistemler gibi kritik alanlarda yüksek doğruluk sağlamakla birlikte, kararlarının gerekçesini insanlara açıklayamamaları güven ve denetlenebilirlik açısından ciddi bir engeldir [1], [2]. Açıklanabilir yapay zekâ (XAI) bu boşluğu doldurmayı amaçlar; ancak "yorumlanabilirlik" kavramının kendisi tartışmalıdır ve ortak bir ölçütü yoktur [3], [4]. Bulanık mantık [5] bu noktada doğal bir araçtır: "EĞER <i>glikoz yüksek</i> VE <i>BMI yüksek</i> İSE <i>diyabet riski yüksek</i>" biçimindeki dilsel kurallar, sayısal bir modelin davranışını alan uzmanının okuyabileceği bir dile çevirir. Ouifak ve Idri [1], BM'nin MÖ yorumlanabilirliğindeki kullanımını iki ana yol üzerinden sınıflandırır: (1) kara kutudan <i>bulanık kural çıkarımı</i> ve (2) sinir ağlarının öğrenme gücünü bulanık çıkarımla birleştiren <i>nöro-bulanık modelleme</i> (özellikle ANFIS [6]).</p>
+<p><b>Problem.</b> Derleme, ANFIS'in en çok çalışılan ve dengeli teknik olduğunu raporlarken, aynı tekniğin grid-partition yapısında kural sayısının girdi sayısıyla üstel (p<sup>d</sup>) büyüdüğünü, bunun da hem yorumlanabilirliği hem de hesaplama maliyetini olumsuz etkilediğini vurgular (Bölüm 9.1, 12). Ayrıca yorumlanabilirliği yalnızca kural sayısıyla ölçmenin yetersizliğine ve yeni metrik ihtiyacına dikkat çeker [1], [7].</p>
+<p><b>Amaç ve kapsam.</b> Referans çalışma bir derleme olduğundan, Minimum Yeniden Gerçekleştirme Gereksinimi (MRR) şu şekilde tanımlanmıştır: (R1) derlemenin nicel performans–yorumlanabilirlik analizinin (Tablo 6, Tablo 9, Şekil 21) yeniden üretilmesi; (R2) derlemenin merkezî tekniği olan ANFIS'in sıfırdan gerçekleştirilip derlemede sık geçen benchmark veri setlerinde değerlendirilmesi ve sonuçların derlemedeki medyanlarla karşılaştırılması; (R3) bulanık modellerin kara kutu bir sinir ağını açıklamada kullanılması ve derlemenin tanımladığı <i>fidelity</i> ölçütüyle (Denk. 25) değerlendirilmesi. Özgün katkı olarak derlemenin belirttiği sınırlılıklara doğrudan yanıt veren <b>C-ANFIS</b> geliştirilmiş ve kontrollü deneylerle baseline'a karşı sınanmıştır. Tüm kod, veri ve sonuçlar GitHub deposunda tekrar üretilebilir biçimde paylaşılmıştır.</p>
+
+<h2>2. İlgili Çalışmalar (Related Work)</h2>
+<p><b>Derlemeler.</b> Gacto vd. [7] dilsel bulanık kural tabanlı sistemlerde yorumlanabilirlik ölçütlerini karmaşıklık-tabanlı (kural/MF/koşul sayısı) ve anlamsal-tabanlı (ayırt edilebilirlik, kapsama, tutarlılık) olarak ikiye ayırır; bu ayrım projemizdeki metrik seçimine temel oluşturur. Alonso vd. [8] bulanık sistem yorumlanabilirliğinin kavramsal çerçevesini ve doğruluk–yorumlanabilirlik ödünleşimini tartışır. Das vd. [9] bulanık derin sinir ağlarını topluluk, paralel ve sıralı modeller olarak sınıflandırır; De Campos Souza [10] bulanık ve nöro-bulanık ağların tarihsel gelişimini ve eğitim yöntemlerini özetler. Ouifak ve Idri [1] ise bunlardan farklı olarak 330 çalışmayı sistematik biçimde haritalayıp nicel bir performans–yorumlanabilirlik karşılaştırması yapan ilk kapsamlı SLR'dir.</p>
+<p><b>Kara kutudan bulanık açıklama.</b> Aghaeipoor vd. [11] derin sinir ağları için yerel ve global düzeyde bulanık kural tabanlı açıklayıcılar önermiş ve %90'ın üzerinde fidelity raporlamıştır. Yin, Lam ve Watson [12] modelden bağımsız (model-agnostic) hiyerarşik bulanık açıklama çerçevesi geliştirmiştir. Bu çalışmalar, LIME [13] ve SHAP [14] gibi genel XAI yöntemlerinin aksine açıklamayı doğrudan dilsel kurallarla verir. Kara kutu davranışını taklit eden vekil modellerin değerlendirilmesinde fidelity ölçütü Craven ve Shavlik'in [15] pedagojik kural çıkarımı yaklaşımına dayanır.</p>
+<p><b>Kompakt ve yorumlanabilir nöro-bulanık modeller.</b> Kural patlamasına karşı Huang vd. [16] FCM tabanlı derin yama öğrenmesiyle kural sayısını azaltmış; Fuchs vd. [17] çok amaçlı optimizasyonla öznitelik ve kural sayısını birlikte küçültmüştür. Ouifak ve Idri [18] Mamdani ve TSK tabanlı nöro-bulanık sistemleri tıbbi tanıda kural ve MF sayısı üzerinden karşılaştırmış; Pekaslan vd. [19] performans ve yorumlanabilirliğin birlikte elde edilip edilemeyeceğini incelemiştir. Cui, Wu ve Xu [20] yüksek boyutta TSK ağlarında ateşleme kuvvetlerinin doygunluğa ulaşmasını ("boyut laneti") açıklamış, Wu vd. [21] TSK sistemlerinin sinir ağları ve uzmanlar karışımıyla fonksiyonel denkliğini göstermiştir. Kural tabanı sadeleştirmede Setnes vd. [22] benzer bulanık kümelerin birleştirilmesini, Chiu [23] ise kümeleme tabanlı model tanımlamayı önermiştir. Nauck [24] karmaşıklık, kapsama ve bölümleme bileşenlerini tek bir indekste birleştirmiştir.</p>
+
+<p class="cap">Tablo 1. İlgili çalışmaların karşılaştırmalı özeti</p>
+<table>
+<tr><th class="l">Çalışma</th><th>Yöntem</th><th>Yorumlanabilirlik ölçütü</th><th class="l">Projeyle ilişkisi</th></tr>
+<tr><td class="l">Jang [6] (1993)</td><td>Grid ANFIS, hibrit öğrenme</td><td>—</td><td class="l">Baseline'ın kendisi</td></tr>
+<tr><td class="l">Setnes vd. [22] (1998)</td><td>Benzerlik ile MF birleştirme</td><td>MF sayısı</td><td class="l">C-ANFIS adım (3)</td></tr>
+<tr><td class="l">Nauck [24] (2003)</td><td>İndeks: comp×cov×part</td><td>Bileşik indeks</td><td class="l">Önerilen ek metrik</td></tr>
+<tr><td class="l">Gacto vd. [7] (2011)</td><td>Derleme / taksonomi</td><td>Karmaşıklık + anlamsal</td><td class="l">Metrik çerçevesi</td></tr>
+<tr><td class="l">Huang vd. [16] (2022)</td><td>FCM + yama öğrenme</td><td>Kural sayısı</td><td class="l">FCM ile kural üretimi fikri</td></tr>
+<tr><td class="l">Aghaeipoor vd. [11] (2023)</td><td>DNN için bulanık açıklayıcı</td><td>Fidelity, kural sayısı</td><td class="l">R3 surrogate deneyi</td></tr>
+<tr><td class="l">Ouifak &amp; Idri [1] (2025)</td><td>SLR, 330 çalışma</td><td>Kural sayısı, Borda</td><td class="l">Referans çalışma</td></tr>
+<tr><td class="l">Yin vd. [12] (2025)</td><td>Hiyerarşik model-agnostik</td><td>Fidelity</td><td class="l">Güncel açıklayıcı örneği</td></tr>
+</table>
+
+<h2>3. Teorik Altyapı (Theoretical Background)</h2>
+<p><b>Bulanık küme ve üyelik fonksiyonu.</b> Klasik kümede bir eleman ya kümeye aittir ya değildir; Zadeh'in [5] bulanık kümesinde ise üyelik μ<sub>A</sub>(x) ∈ [0, 1] arasında derecelidir. Projede Gauss MF kullanılmıştır: μ(x) = exp(−(x−c)²/(2σ²)); burada <i>c</i> merkez, <i>σ</i> genişliktir. Gauss MF türevlenebilir olduğu için gradyan tabanlı öğrenmeye uygundur. Wang–Mendel referans modelinde eşit aralıklı üçgen MF'ler kullanılmıştır.</p>
+<p><b>Dilsel değişken ve bulanıklaştırma.</b> "worst area" gibi bir sayısal girdi, {Düşük, Orta, Yüksek} gibi dilsel terimlerle tanımlanır; bulanıklaştırma (fuzzification), kesin bir girişin her terime ait üyelik derecesini hesaplamaktır.</p>
+<p><b>Kural tabanı ve çıkarım.</b> Mamdani [25] sisteminde hem öncül hem sonuç bulanık kümedir ve sonuç durulaştırma (ör. ağırlık merkezi) ile kesin değere çevrilir. Takagi–Sugeno–Kang (TSK) [26] sisteminde sonuç, girdilerin bir fonksiyonudur. Birinci dereceden TSK kuralı: <i>R<sub>r</sub>: EĞER x<sub>1</sub> A<sub>r1</sub> VE … VE x<sub>d</sub> A<sub>rd</sub> İSE f<sub>r</sub> = p<sub>r0</sub> + p<sub>r1</sub>x<sub>1</sub> + … + p<sub>rd</sub>x<sub>d</sub></i>. VE operatörü için çarpım t-normu kullanılır. TSK'da durulaştırma, kural çıktılarının ateşleme kuvvetleriyle ağırlıklı ortalamasıdır.</p>
+<p><b>ANFIS.</b> Jang'ın [6] ANFIS'i TSK sistemini beş katmanlı bir uyarlanabilir ağ olarak ifade eder:</p>
+<div class="eq">L1: μ<sub>l</sub>(x<sub>j</sub>) &nbsp;&nbsp; L2: w<sub>r</sub> = ∏<sub>j</sub> μ<sub>A<sub>rj</sub></sub>(x<sub>j</sub>) &nbsp;&nbsp; L3: w̄<sub>r</sub> = w<sub>r</sub> / Σ<sub>q</sub> w<sub>q</sub> &nbsp;&nbsp; L4: w̄<sub>r</sub> f<sub>r</sub> &nbsp;&nbsp; L5: y = Σ<sub>r</sub> w̄<sub>r</sub> f<sub>r</sub><span class="n">(1)</span></div>
+<p>Öncül (MF) parametreleri doğrusal olmayan, sonuç parametreleri ise y'de doğrusaldır. Bu yapı <b>hibrit öğrenme</b>ye olanak tanır: ileri geçişte öncüller sabitken sonuç parametreleri en küçük kareler (LSE) ile kapalı biçimde çözülür; geri geçişte sonuçlar sabitken MF parametreleri gradyan inişiyle güncellenir [6].</p>
+<p><b>Fuzzy C-Means (FCM).</b> Bezdek'in [27] FCM algoritması, her veri noktasının birden çok kümeye u<sub>ik</sub> ∈ [0,1] derecesiyle ait olduğu, J<sub>m</sub> = Σ<sub>i</sub>Σ<sub>k</sub> u<sub>ik</sub><sup>m</sup>‖x<sub>k</sub>−v<sub>i</sub>‖² amaç fonksiyonunu en küçükleyen yumuşak kümelemedir. Küme merkezleri v<sub>i</sub> ve bulanık standart sapmalar doğrudan Gauss MF parametrelerine dönüştürülebilir [23].</p>
+<p><b>Yorumlanabilirlik ölçütleri.</b> [1]'de en sık kullanılan ölçüt kural sayısıdır (296 çalışma); bunu MF sayısı, fidelity ve kural uzunluğu izler. <i>Fidelity</i>, vekil modelin kara kutuyla aynı etiketi verdiği örneklerin yüzdesidir (Denk. 2). <i>Nauck indeksi</i> [24] üç bileşenin çarpımıdır (Denk. 3): comp = m/Σ<sub>r</sub>n<sub>r</sub> (m: sınıf sayısı, n<sub>r</sub>: kural r'deki koşul sayısı), cov<sub>i</sub> = ortalama ĥ<sub>i</sub>(x) (h<sub>i</sub> = Σ<sub>k</sub>μ<sub>k</sub>; h ≤ 1 ise ĥ = h, aksi hâlde ĥ = (p<sub>i</sub>−h)/(p<sub>i</sub>−1)) ve part<sub>i</sub> = 1/(p<sub>i</sub>−1). <i>Ayırt edilebilirlik</i> ise aynı öznitelikteki MF çiftlerinin en büyük Jaccard benzerliğinin (|A∩B|/|A∪B|) 1'den farkıdır [7], [22].</p>
+<div class="eq">Fidelity = (eşleşen tahmin sayısı / toplam örnek) × 100<span class="n">(2)</span></div>
+<div class="eq">I<sub>Nauck</sub> = comp × cov̄ × part̄ ∈ (0, 1]<span class="n">(3)</span></div>
+<p>Derlemede adı geçen diğer kavramlar (Tip-2/Tip-3 bulanık mantık, evrimsel nöro-bulanık ağlar) bu projenin deney kapsamında değildir; Tip-2 sistemler ek belirsizlik modellemesi karşılığında daha yüksek kural sayısına (medyan 40) sahiptir [1].</p>
+
+<h2>4. Referans Çalışmanın Yöntemi (Original Method)</h2>
+<p>Ouifak ve Idri [1], Kitchenham yönergelerine dayanan bir sistematik haritalama/derleme protokolü uygulamıştır: altı dijital kütüphanede (IEEE Xplore, ScienceDirect, PubMed, ACM DL, Wiley, Google Scholar) arama yapılmış, dahil etme/dışlama ve kalite değerlendirmesi kriterleriyle 330 çalışma seçilmiş, veriler 3 haritalama (MQ) ve 8 araştırma sorusu (RQ) üzerinden çıkarılmıştır. Bu bölümde projeyi doğrudan ilgilendiren bulgular özetlenmiştir.</p>
+<ul>
+<li><b>RQ1–RQ4:</b> En çok açıklanmaya çalışılan kara kutu sinir ağlarıdır. En sık kullanılan bulanık teknikler ANFIS ve evrimsel FNN'dir. Açıklamalar ağırlıklı olarak kural tabanlıdır ve en çok tablo verisi kullanılmıştır.</li>
+<li><b>RQ5 (Tablo 6):</b> Yorumlanabilirlik, sistem başına medyan kural sayısıyla raporlanır. ANFIS için bu değer 19 çalışmada 17'dir (min 4, maks 256).</li>
+<li><b>RQ6 (Tablo 9):</b> Performans medyan doğrulukla raporlanır. ANFIS için medyan %95, en düşük %78, en yüksek %99,9'dur.</li>
+<li><b>RQ7 (Bölüm 11, Şekil 21):</b> Her sistem doğruluğa (yüksek iyi) ve kural sayısına (düşük iyi) göre ayrı ayrı sıralanır. Sıralar toplanır, toplam yeniden sıralanarak "tradeoff rank" bulunur (Borda sayımı). GFS 1. sırada; Dynamic FRI, FMM ve SOFNN 2. sırada; ANFIS 3. sıradadır.</li>
+<li><b>RQ8 ve sınırlılıklar:</b> Hesaplama karmaşıklığı, ölçeklenebilirlik, yüksek boyutta kural patlaması ve standart yorumlanabilirlik metriği eksikliği.</li>
+</ul>
+<p>Derlemenin önerdiği referans "sistem", tipik bir nöro-bulanık açıklanabilir sınıflandırıcıdır. Girdiler tablo verisinin öznitelikleri, çıktı ise sınıf etiketidir. Gauss MF'ler, grid-partition kural tabanı ve TSK çıkarımı kullanılır; eğitim hibrit öğrenme ile yapılır. Değerlendirme doğruluk, kural sayısı ve fidelity ile yapılır.</p>
+
+<h2>5. Yeniden Gerçekleştirme Metodolojisi (Reproduction Methodology)</h2>
+<h3>5.1 R1 — Borda analizinin yeniden üretimi</h3>
+<p>Tablo 6 ve Tablo 9'dan Şekil 21'deki 20 sistemin medyan doğruluk ve medyan kural sayısı değerleri alınmış, sıralama <code>src/borda.py</code> ile yeniden hesaplanmıştır. Şekil 21'deki sıra tablosunun incelenmesi, makalenin bağları farklı ele aldığını göstermiştir. Doğrulukta bağlar keyfi olarak kırılmıştır ("ordinal"; ör. Dynamic FRI ile CFC aynı %93,5 değerine sahipken 3 ve 4. sırayı almıştır). Kural sayısı ve tradeoff sıralarında ise eşit değerler aynı sırayı almış, sonraki sıra atlanmamıştır ("dense"). Bu politika birebir uygulanmıştır.</p>
+<h3>5.2 R2 — ANFIS'in sıfırdan gerçekleştirilmesi</h3>
+<p>ANFIS herhangi bir bulanık mantık kütüphanesi kullanılmadan NumPy ile yazılmıştır (<code>src/anfis.py</code>). Uygulamanın önemli noktaları:</p>
+<ul>
+<li><b>Genel kural gösterimi:</b> Her kural, her öznitelik için bir MF indeksi veya −1 ("önemsiz") tutan bir satırla gösterilir. Böylece grid ANFIS ve C-ANFIS aynı sınıfla ifade edilir.</li>
+<li><b>Sayısal kararlılık:</b> Ateşleme kuvvetleri log-alanında hesaplanır; normalizasyon softmax(log w) olarak yapılır.</li>
+<li><b>Çok sınıflı çıkış:</b> Her sınıf için ayrı bir TSK çıkışı vardır (one-hot hedef); karar argmax ile verilir.</li>
+<li><b>Hibrit öğrenme:</b> Her epokta sonuç parametreleri ridge-düzenlileştirilmiş LSE ile (λ = 10⁻³) çözülür. Ardından MF merkez ve genişlikleri, analitik gradyanla Adam [28] kullanılarak güncellenir (100 epok, η = 0,01, σ ≥ 0,02). En düşük eğitim kaybını veren parametreler saklanır.</li>
+</ul>
+<p>Öncül gradyanı, normalizasyonun softmax olduğu gözlemiyle kompakt biçimde türetilmiştir:</p>
+<div class="eq">g<sub>r</sub> = (y − t)·f<sub>r</sub>, &nbsp; ∂E/∂log w<sub>r</sub> = w̄<sub>r</sub>(g<sub>r</sub> − Σ<sub>q</sub>w̄<sub>q</sub>g<sub>q</sub>), &nbsp; ∂log μ/∂c = (x−c)/σ², &nbsp; ∂log μ/∂σ = (x−c)²/σ³<span class="n">(4)</span></div>
+<p>Analitik gradyan, merkezi farklarla hesaplanan sayısal gradyanla karşılaştırılmış ve bağıl hata &lt; 10⁻⁵ bulunmuştur (<code>tests/test_anfis.py</code>). Grid başlatmada her öznitelik için p eşit aralıklı Gauss MF yerleştirilmiş, komşu MF'ler 0,5 üyelikte kesişecek biçimde σ = Δ/(2√(2 ln 2)) seçilmiştir. Grid-partition'da kural sayısı p<sup>d</sup> olduğundan, karşılıklı bilgi (mutual information) ile en bilgilendirici k = 4 öznitelik seçilmiştir. Bu seçim yalnızca eğitim kıvrımında yapılmıştır. Bu ayarla 2 MF için 16 kural elde edilir; bu değer derlemenin ANFIS medyanına (17) çok yakındır.</p>
+<p><b>Referans modeller.</b> Karşılaştırma için şu modeller de aynı kıvrımlarda çalıştırılmıştır:</p>
+<ul>
+<li><b>Wang–Mendel (WM) [29]:</b> Mamdani tipi, 3 üçgen MF, tek-kazanan-kural çıkarımı. Orijinal WM'de çakışan kurallarda en yüksek dereceli örnek kazanır ("max"). Bu kural Pima'da çoğunluk sınıfının altında sonuç verdiği için, sınıf bazında derece toplamı kullanan Ishibuchi tipi [30] varyant ("sum") da raporlanmıştır.</li>
+<li><b>Karar ağacı:</b> Derinlik ≤ 4, beyaz kutu referansı.</li>
+<li><b>MLP:</b> 32-16 gizli nöronlu kara kutu referansı.</li>
+</ul>
+<h3>5.3 R3 — Kara kutu MLP için bulanık vekil modeller</h3>
+<p>MLP, standartlaştırılmış <i>tüm</i> özniteliklerle eğitilmiştir (kara kutu). Bulanık vekil modeller ise gerçek etiketler yerine MLP'nin eğitim kümesi tahminleriyle ve yalnızca k = 4 öznitelikle eğitilmiştir. Bu, pedagojik kural çıkarımı yaklaşımıdır [15]. Fidelity, test kümesinde Denk. 2 ile ölçülmüştür.</p>
+
+<h2>6. Önerilen Geliştirme: C-ANFIS (Proposed Extension)</h2>
+<p><b>Gerekçe.</b> Derleme üç sorunu açıkça belirtir: (a) grid ANFIS'te kural patlaması ve ölçeklenebilirlik, (b) yorumlanabilirliğin yalnızca kural sayısıyla ölçülmesi, (c) MF'lerin anlamsal açıklığının korunması ihtiyacı [1], [7]. C-ANFIS bu üç soruna altı adımlı bir boru hattıyla yanıt verir (<code>src/canfis.py</code>):</p>
+<ol>
+<li><b>Sınıf-bazlı FCM ile kural üretimi:</b> Her sınıfın eğitim verisi ayrı ayrı FCM (m = 2) ile c = 2 kümeye ayrılır. Her küme merkezi bir kuralın öncülü, bulanık standart sapma ise (×1,5) MF genişliği olur. Kural sayısı K·c'dir ve <i>öznitelik sayısından bağımsızdır</i>. Kurallar sınıf prototiplerinden doğduğu için anlamlı bir "baskın sınıf" taşır.</li>
+<li><b>Hibrit eğitim:</b> Baseline ile birebir aynı algoritma ve hiperparametreler kullanılır (adil karşılaştırma için).</li>
+<li><b>MF benzerlik birleştirme:</b> Aynı öznitelik üzerindeki iki MF'nin Jaccard benzerliği τ = 0,6'yı aşarsa MF'ler birleştirilir [22]. Yeni merkez iki merkezin ortalaması, genişlik ise max(σ<sub>1</sub>, σ<sub>2</sub>) + |c<sub>1</sub>−c<sub>2</sub>|/4 olur. Birleştirme sonrası özdeş hâle gelen kurallar tekilleştirilir.</li>
+<li><b>Önemsiz koşul kaldırma:</b> Evrenin ≥%80'inde 0,5'ten büyük üyelik veren bir MF bilgi taşımaz. Bu MF'yi kullanan koşul kuraldan çıkarılır (rule length azalır).</li>
+<li><b>Kural budama:</b> Ortalama normalize ateşleme kuvveti (kapsama) θ/R'nin (θ = 0,3) altında kalan kurallar silinir. En az K kural korunur.</li>
+<li><b>İnce ayar:</b> Sadeleştirilmiş yapı 50 epok, η/2 öğrenme hızıyla yeniden eğitilir.</li>
+</ol>
+<p><b>Ek yorumlanabilirlik metrikleri.</b> Derlemenin "yeni metrik" çağrısına karşılık, kural sayısına ek olarak şu metrikler raporlanmıştır: toplam kural uzunluğu, MF sayısı, Jaccard tabanlı ayırt edilebilirlik ve Nauck indeksi [24]. Ayrıca derlemenin Borda yöntemi Nauck indeksini üçüncü kriter olarak alacak şekilde genişletilmiştir.</p>
+<p><b>Başarı ölçütü (önceden tanımlandı).</b> Önerilen yöntemin başarılı sayılması için iki koşul belirlenmiştir: (i) kural sayısı ve toplam kural uzunluğu baseline'a göre belirgin biçimde azalmalı; (ii) doğruluk farkı 10-kat CV üzerinde Wilcoxon testinde (α = 0,05) baseline aleyhine anlamlı olmamalı. İkincil hedefler ölçeklenebilirlik ve gürültüye dayanıklılıktır.</p>
+
+<h2>7. Deney Düzeneği (Experimental Setup)</h2>
+<p><b>Veri setleri.</b> Derlemede sık geçen üç tablo verisi kullanılmıştır:</p>
+<ul>
+<li><b>Iris</b> [31]: 150 örnek, 4 öznitelik, 3 sınıf.</li>
+<li><b>Wisconsin Diagnostic Breast Cancer (WDBC)</b> [32]: 569 örnek, 30 öznitelik; 212 malign, 357 benign.</li>
+<li><b>Pima Indians Diabetes</b> [33]: 768 örnek, 8 öznitelik; 268 pozitif. Bu veride eksik değerler 0 olarak kodlanmıştır ve bu durum korunmuştur.</li>
+</ul>
+<p><b>Protokol.</b> 10-kat tabakalı çapraz doğrulama kullanılmıştır (seed = 0). Tüm modeller aynı kıvrımlarda çalıştırılmıştır. MinMax ölçekleme ve MI öznitelik seçimi (k = 4) yalnızca eğitim kıvrımında fit edilmiştir; test değerleri [−0,1, 1,1] aralığına kırpılmıştır. Deneylerin listesi:</p>
+<ul>
+<li><b>Ana karşılaştırma (P1):</b> C-ANFIS ve Grid-ANFIS (2MF) baseline, aynı kıvrımlarda eşleştirilmiş olarak.</li>
+<li><b>Ablation (P2):</b> 5 varyant; C-ANFIS adımları tek tek eklenerek.</li>
+<li><b>Gürültü (P3):</b> Test girdilerine σ ∈ {0; 0,05; 0,1; 0,2} Gauss gürültüsü eklenerek.</li>
+<li><b>Ölçeklenebilirlik (P4):</b> k ∈ {2, 4, 6, 8}, WDBC ve Pima, 5-kat CV.</li>
+<li><b>İstatistik (P5):</b> 30 eşleştirilmiş kat üzerinde Wilcoxon işaretli sıra testi [34].</li>
+<li><b>Borda (P6):</b> Derlemenin yöntemi ve Nauck ile genişletilmiş hâli.</li>
+<li><b>Parametre duyarlılığı (P7):</b> Küme/sınıf c ∈ {1,…,4} ve τ ∈ {0,4,…,0,8}.</li>
+</ul>
+<p><b>Ölçütler.</b> Doğruluk, makro-F1, fidelity, kural sayısı, toplam kural uzunluğu, MF sayısı, ayırt edilebilirlik, Nauck indeksi, eğitim süresi ve örnek başına çıkarım süresi.</p>
+<p><b>Ortam.</b> Python 3.13, NumPy 2.5, SciPy 1.18, pandas 3.0, scikit-learn 1.9 [35] (yalnızca veri bölme, MI, MLP ve karar ağacı için), Matplotlib 3.11 ve Streamlit 1.65 (demo). Donanım: 2 çekirdekli Linux bulut sanal makinesi, GPU yok. Tüm deneyler <code>python run_all.py</code> ile ≈8 dakikada yeniden üretilebilir.</p>
+
+<h2>8. Sonuçlar (Results)</h2>
+<h3>8.1 R1: Borda analizinin yeniden üretimi</h3>
+<p>Hesaplanan doğruluk, kural ve tradeoff sıraları Şekil 21 ile <b>20/20 sistemde birebir</b> eşleşmiştir (Şekil 1). Ancak sıralama bağ politikasına duyarlıdır. Üç ölçütte de tutarlı "min" (standart yarışma sırası) politikası uygulandığında ANFIS 3. sıradan 5. sıraya, "average" ile 4. sıraya düşmektedir. Ayrıca Tablo 9'daki "Fuzzy Rule Interpolation" satırının doğruluk değerleri (4; 20; 11; 11,33; 5,22), Tablo 6'daki aynı sistemin kural sayısı değerleriyle birebir aynıdır. Şekil 20'de FRI'nin medyan doğruluğu ≈11 olarak çizilmiştir; bu, olası bir veri kopyalama hatasına işaret eder.</p>
+<figure><img src="../results/figures/r1_borda.png"><figcaption><b>Şekil 1.</b> R1: Tablo 6/9 verisinden yeniden hesaplanan Borda sıraları (çubuk ve çizgi) ile makalenin Şekil 21 değerleri (×).</figcaption></figure>
+
+<h3>8.2 R2: ANFIS benchmark sonuçları</h3>
+<p class="cap">Tablo 2. Baseline sonuçları (10-kat CV, ort. ± std doğruluk %; k = 4 öznitelik)</p>
+<table>
+<tr><th class="l">Model</th><th>Iris</th><th>WDBC</th><th>Pima</th><th>Kural sayısı</th></tr>
+<tr><td class="l">Grid-ANFIS (2MF) — baseline</td><td>95,33 ± 4,50</td><td>93,85 ± 2,23</td><td>74,87 ± 6,80</td><td>16</td></tr>
+<tr><td class="l">Grid-ANFIS (3MF)</td><td>94,67 ± 5,26</td><td>92,62 ± 3,18</td><td>69,40 ± 5,31</td><td>81</td></tr>
+<tr><td class="l">Wang–Mendel (3MF, "sum")</td><td>91,33 ± 4,50</td><td>91,57 ± 4,66</td><td>74,48 ± 3,56</td><td>16–23</td></tr>
+<tr><td class="l">Wang–Mendel orijinal ("max")</td><td>91,33 ± 4,50</td><td>90,15 ± 4,41</td><td>57,04 ± 17,84</td><td>16–23</td></tr>
+<tr><td class="l">Karar ağacı (d ≤ 4)</td><td>94,00 ± 5,84</td><td>92,09 ± 3,82</td><td>74,35 ± 7,30</td><td>7–16 yaprak</td></tr>
+<tr><td class="l">MLP (kara kutu, 4 öznitelik)</td><td>96,00 ± 3,44</td><td>93,85 ± 3,01</td><td>76,96 ± 5,86</td><td>—</td></tr>
+</table>
+<p>Grid-ANFIS'in 30 kattaki medyan doğruluğu %92,98, veri seti medyanları ise %93,33 (Iris), %92,98 (WDBC) ve %72,73 (Pima) olmuştur. Kural sayısı 16'dır. Derlemenin ANFIS için raporladığı değerler (medyan %95, aralık %78–99,9; medyan 17 kural) ile <b>uyumludur</b>; Pima'nın düşük değeri derlemedeki alt sınıra (%78) yakındır ve bu veri setinin bilinen zorluğunu yansıtır. 3MF grid (81 kural) hiçbir veri setinde 2MF'yi geçememiştir: kural sayısını 5 kat artırmak, özellikle Pima'da (−5,5 puan) aşırı öğrenmeye yol açmıştır.</p>
+
+<h3>8.3 R3: Kara kutu açıklama (fidelity)</h3>
+<p>Bulanık vekiller MLP'yi Iris'te %90,7–99,3, WDBC'de %91,0–93,3 ve Pima'da %77,1–79,5 fidelity ile taklit etmiştir (Şekil 2). C-ANFIS, 3,5–5 kuralla Iris ve Pima'da en yüksek fidelity'yi (%99,3 ve %79,5), WDBC'de 16 kurallı grid'e yakın bir değeri (%92,6'ya karşı %93,3) elde etmiştir. Pima'daki düşük fidelity, MLP'nin 8 özniteliğe dayanan karar sınırının 4 öznitelikle tam taklit edilememesinden kaynaklanır.</p>
+<figure><img src="../results/figures/r3_fidelity.png" style="width:82%"><figcaption><b>Şekil 2.</b> R3: MLP kara kutusunun bulanık vekillerle açıklanmasında fidelity (Denk. 2). Çubuk üstü: medyan kural sayısı.</figcaption></figure>
+
+<h3>8.4 P1: C-ANFIS ve baseline karşılaştırması</h3>
+<p class="cap">Tablo 3. Baseline (Grid-ANFIS 2MF) ve C-ANFIS — 3 veri seti × 10 kat ortalaması (yönerge 6.2 formatı)</p>
+<table>
+<tr><th class="l">Performans ölçütü</th><th>Baseline</th><th>C-ANFIS</th><th>Değişim</th></tr>
+<tr><td class="l">Accuracy (%)</td><td>88,02</td><td>87,18</td><td>−0,84 puan (p = 0,152, anlamlı değil)</td></tr>
+<tr><td class="l">Macro-F1 (%)</td><td>86,70</td><td>85,88</td><td>−0,82 puan</td></tr>
+<tr><td class="l">Kural sayısı</td><td>16,0</td><td>3,83</td><td><b class="g">−%76,0</b></td></tr>
+<tr><td class="l">Toplam kural uzunluğu (koşul)</td><td>64,0</td><td>14,8</td><td><b class="g">−%76,8</b></td></tr>
+<tr><td class="l">MF sayısı</td><td>8,0</td><td>13,4</td><td><b class="r">+%67,9</b></td></tr>
+<tr><td class="l">Nauck indeksi</td><td>0,0069</td><td>0,0462</td><td><b class="g">×6,7</b></td></tr>
+<tr><td class="l">Eğitim süresi (s/kat)</td><td>0,121</td><td>0,100</td><td>−%17</td></tr>
+<tr><td class="l">Çıkarım süresi (ms/örnek)</td><td>0,0045</td><td>0,0030</td><td>−%33</td></tr>
+</table>
+<p>Veri seti bazında doğruluk farkları −1,33 (Iris), −1,06 (WDBC) ve −0,13 (Pima) puandır. Hiçbiri Wilcoxon testinde anlamlı değildir (p = 0,69; 0,086; 0,88). C-ANFIS, 81 kurallı 3MF grid'e karşı ortalama +1,61 puan (p = 0,083) önde olup Pima'da bu fark +5,34 puanla anlamlıdır (p = 0,022). Şekil 3 doğruluk–kural sayısı düzlemini göstermektedir: C-ANFIS her veri setinde en az kurallı bulanık modeldir.</p>
+<figure><img src="../results/figures/p1_tradeoff.png"><figcaption><b>Şekil 3.</b> Performans–yorumlanabilirlik düzlemi (x: kural sayısı, log ölçek; y: 10-kat CV doğruluğu). Kesikli çizgi: MLP.</figcaption></figure>
+<p>Tek bir bölünmede (WDBC) C-ANFIS'in ürettiği kural tabanı yalnızca üç kuraldan oluşmaktadır ve test doğruluğu %93,6'dır (aynı bölünmede grid: 16 kural, %93,0). Birinci kural örneği: <i>"EĞER mean concave points Düşük VE worst perimeter Düşük VE worst area Düşük VE worst concave points Düşük İSE benign [kapsama 0,61]"</i>. İkinci kural tersini ifade eder (hepsi Yüksek → malignant, kapsama 0,32). Üçüncü kural, sınır bölgesini "Orta" terimleriyle tanımlar (kapsama 0,07). Grid tabanında ise ilk kural dışındaki 15 kuralın çoğunun kapsaması 0,01–0,03'tür.</p>
+
+<h3>8.5 P2: Ablation çalışması</h3>
+<figure><img src="../results/figures/p2_ablation.png"><figcaption><b>Şekil 4.</b> Ablation: her bileşenin doğruluk, toplam kural uzunluğu ve Nauck indeksi üzerindeki etkisi (3 veri seti ortalaması).</figcaption></figure>
+<p>Kural uzunluğundaki azalmanın en büyük kısmı (64 → 18,7) FCM tabanlı kural üretiminden gelir. MF birleştirme ve önemsiz koşul kaldırma küçük katkı sağlar (18,7 → 17,7); budama ise uzunluğu 14,8'e indirir. Nauck indeksi her adımda monoton artar (0,023 → 0,029 → 0,031 → 0,046). Doğruluk tüm varyantlarda 87,0–88,0 bandında kalmıştır. FCM olmadan yalnızca sadeleştirme uygulanan grid varyantı kural uzunluğunu 35,1'e indirebilmiştir; bu, kazanımın temel kaynağının kural üretim stratejisi olduğunu gösterir.</p>
+
+<h3>8.6 P4: Ölçeklenebilirlik</h3>
+<figure><img src="../results/figures/p4_scalability.png"><figcaption><b>Şekil 5.</b> Girdi sayısı k'ya göre kural sayısı, eğitim süresi (log ölçek) ve doğruluk (5-kat CV).</figcaption></figure>
+<p class="cap">Tablo 4. k = 8 öznitelikte grid ANFIS ve C-ANFIS (5-kat CV)</p>
+<table>
+<tr><th class="l">Veri</th><th>Model</th><th>Doğruluk (%)</th><th>Kural</th><th>Koşul</th><th>Eğitim (s)</th></tr>
+<tr><td class="l" rowspan="2">WDBC</td><td>Grid-ANFIS</td><td>93,85</td><td>256</td><td>2048</td><td>20,34</td></tr>
+<tr><td>C-ANFIS</td><td>93,85</td><td>2,6</td><td>19,2</td><td>0,13 (≈161× hızlı)</td></tr>
+<tr><td class="l" rowspan="2">Pima</td><td>Grid-ANFIS</td><td>66,16</td><td>256</td><td>2048</td><td>21,89</td></tr>
+<tr><td>C-ANFIS</td><td><b>74,22</b></td><td>3,6</td><td>25,8</td><td>0,18 (≈122× hızlı)</td></tr>
+</table>
+<p>Grid'in kural sayısı 2<sup>k</sup> ile üstel, eğitim süresi ise LSE sistem boyutu R(d+1) nedeniyle daha da hızlı artmaktadır. Pima'da grid doğruluğu k arttıkça %75,9'dan %66,2'ye düşmüştür. Bunun nedeni, 614 eğitim örneğiyle 256 × 9 × 2 = 4608 sonuç parametresinin kestirilmeye çalışılmasıdır (aşırı öğrenme). C-ANFIS'in kural sayısı ise k'dan bağımsız kalmıştır.</p>
+
+<h3>8.7 P3: Gürültüye dayanıklılık</h3>
+<figure><img src="../results/figures/p3_noise.png"><figcaption><b>Şekil 6.</b> Test girdilerine eklenen Gauss gürültüsüne karşı doğruluk.</figcaption></figure>
+<p>C-ANFIS gürültüye karşı baseline'dan <b>daha dayanıklı değildir</b>. σ = 0,1'de iki model arasındaki fark −1,79 puandır (p = 0,21, anlamlı değil). WDBC'de σ = 0,2'de C-ANFIS %60,3'e, grid %66,2'ye düşerken WM (%81,4) ve MLP (%83,8) çok daha dayanıklı kalmıştır.</p>
+
+<h3>8.8 P6–P7: Genişletilmiş Borda ve parametre duyarlılığı</h3>
+<p>Derlemenin yöntemiyle (doğruluk + kural sayısı) yapılan Borda sıralamasında bulanık modellerimiz arasında birinci Grid-ANFIS (2MF) olmuştur (medyan doğruluk en yüksek); C-ANFIS 3. sırada yer almıştır. Nauck indeksi üçüncü kriter olarak eklendiğinde ise C-ANFIS birinci sıraya yükselmiştir. Parametre duyarlılığında τ ∈ [0,4; 0,8] doğruluğu ±0,5 puan içinde etkilemiştir. Küme/sınıf c = 1 seçildiğinde ise yalnızca 2 kuralla WDBC'de %93,67, Pima'da %77,47 doğruluk ve en yüksek Nauck değerleri (≈0,13) elde edilmiştir. Daha fazla küme, kural sayısını artırırken doğruluğu iyileştirmemiştir.</p>
+
+<h2>9. Tartışma (Discussion)</h2>
+<p><b>Neden daha az kuralla benzer doğruluk?</b> Grid-partition, girdi uzayının tamamını eşit hücrelere böler; verinin bulunmadığı hücreler için de kural üretir. Bu kuralların ateşleme kapsaması 0,01–0,03 düzeyindedir (Bölüm 8.4). FCM ise kuralları yalnızca verinin yoğunlaştığı bölgelere yerleştirir. Sınıf-bazlı kümelemeyle her kural bir sınıf prototipine karşılık gelir; bu nedenle az sayıda kural, karar sınırını tanımlamaya yeterlidir. Bu sonuç derlemenin GFS, FMM ve SOFNN gibi az kurallı sistemlerin tradeoff sıralamasında öne çıktığı bulgusuyla tutarlıdır [1].</p>
+<p><b>Derleme bulgularıyla uyum.</b> Grid ANFIS'in doğruluğu (%92,98 medyan, 16 kural) derlemenin ANFIS medyanlarıyla uyumludur. Bu, derlemedeki ANFIS değerlerinin tipik benchmark koşullarında yeniden elde edilebildiğini gösterir. Ancak derlemedeki medyanlar farklı veri setleri, ön işlemeler ve doğrulama protokolleri içeren çalışmalardan toplanmıştır. Bu nedenle birebir sayısal eşleşme beklenmemelidir; bu, derleme düzeyi karşılaştırmaların doğal bir sınırlılığıdır.</p>
+<p><b>Eleştirel değerlendirme — Borda yöntemi.</b> Borda sıralaması sıralı (ordinal) verilerle çalışır: %99 ile %95 arasındaki fark ve %95 ile %94,9 arasındaki fark aynı ağırlığı alır. Ayrıca çalışma sayısını dikkate almaz; 2 çalışmalı FURIA ile 19 çalışmalı ANFIS aynı güvenle sıralanır. Bağ politikasının sonucu değiştirmesi (ANFIS'in 3. sıradan 5. sıraya düşmesi) ve olası FRI veri hatası, bu tür birleştirilmiş sıralamaların duyarlılık analiziyle birlikte raporlanması gerektiğini göstermektedir. Kendi deneylerimizde de aynı yöntem, metrik seçimine bağlı olarak farklı kazananlar üretmiştir: yalnızca kural sayısıyla Grid-ANFIS, Nauck ile C-ANFIS birinci olmuştur. Bu, derlemenin "standart metrik eksikliği" tespitini deneysel olarak doğrulamaktadır.</p>
+<p><b>Anlamsal yorumlanabilirlik — beklenmeyen bulgu.</b> Kısıtsız hibrit öğrenme, grid ANFIS'in başlangıçta düzgün olan "Düşük/Yüksek" MF'lerini bozmuştur (Şekil 7). "Düşük" MF'lerin merkezi evrenin dışına (c ≈ −0,26) kaymış, genişlikleri daralmıştır; sonuçta evrenin büyük bölümünde iki MF'nin de üyeliği ≈0'dır. Model yine çalışır, çünkü normalizasyon (L3) yalnızca göreli ateşleme kuvvetine bakar; ancak "Düşük" etiketi artık anlam taşımaz. Ayırt edilebilirlik metriği bu durumu "mükemmel ayrışma" (≈1,0) olarak yanlış raporlarken, Nauck indeksinin kapsama bileşeni bozulmayı yakalamıştır. Bu bulgu, tek bir anlamsal metriğe güvenmenin yanıltıcı olabileceğini ve derlemenin vurguladığı bileşik metrik ihtiyacını desteklemektedir. C-ANFIS'te de bazı MF'ler daralmıştır; bu, öğrenme sırasında anlamsal kısıt (ör. sıralama ve kapsama korunumu) eklenmesi gerektiğini gösterir [7].</p>
+<figure><img src="../results/figures/mf_comparison.png" style="width:92%"><figcaption><b>Şekil 7.</b> WDBC'de öğrenilmiş üyelik fonksiyonları: grid başlangıç (üst), grid eğitim sonrası (orta), C-ANFIS (alt).</figcaption></figure>
+<p><b>MF sayısının artması.</b> C-ANFIS'te her kural kendi MF'lerine sahip olduğundan MF sayısı (13,4) grid'den (8) fazladır. τ = 0,6 ile birleştirme yalnızca kısmi bir azaltma sağlamıştır. Kural ve koşul sayısındaki büyük azalma Nauck indeksini yine de artırmıştır. Ancak öznitelik başına 3–4 MF, "Düşük/Yüksek" ikilisi kadar okunaklı değildir; insanların aynı anda işleyebildiği öğe sayısının sınırlı olduğu (7 ± 2) dikkate alındığında [36] bu bir ödünleşimdir.</p>
+<p><b>Gürültüde başarısızlığın olası nedenleri.</b> (i) TSK birinci derece sonuç fonksiyonları doğrusal olduğundan, gürültü girişi kaydırdığında çıktı da doğrusal olarak sapar. Mamdani tipi WM'nin sabit sınıf sonuçları ise bu sapmadan etkilenmez. (ii) Daralmış MF'ler (küçük σ) nedeniyle küçük kaymalar bile normalize ateşleme dağılımını sert biçimde değiştirir. (iii) Az sayıda kural, bir kuralın kapsamından çıkan örnekleri "yedek" bir kuralla karşılayamaz. Bu nedenle sadeleştirme ile dayanıklılık arasında bir ödünleşim olduğu söylenebilir. Olası çözümler şunlardır: σ alt sınırının büyütülmesi, sıfırıncı derece TSK veya gürültü artırımıyla (data augmentation) eğitim.</p>
+<p><b>Mühendislik değeri.</b> Ölçeklenebilirlik sonuçları en güçlü katkıdır. C-ANFIS, grid'in pratikte kullanılamaz hâle geldiği k ≥ 6 bölgesinde 122–161 kat daha hızlı eğitilmiş, daha kısa kurallar üretmiş ve Pima'da 8 puan daha doğru sonuç vermiştir. Bu, derlemenin vurguladığı "hesaplama karmaşıklığı ve ölçeklenebilirlik" sınırlılığına doğrudan bir çözümdür.</p>
+
+<h2>10. Sınırlılıklar (Limitations)</h2>
+<ul>
+<li><b>Derleme düzeyi karşılaştırma:</b> Referans çalışma bir derleme olduğundan, yeniden gerçekleştirme tek bir algoritmanın birebir tekrarı değildir. Derlemenin nicel analizi ve temsilî tekniği (ANFIS) yeniden üretilmiştir. Derleme medyanlarıyla yapılan karşılaştırma niteliksel bir tutarlılık kontrolüdür.</li>
+<li><b>Veri setleri:</b> Yalnızca üç küçük/orta ölçekli tablo verisi kullanılmıştır. Görüntü, zaman serisi ve yüksek boyutlu veriler test edilmemiştir.</li>
+<li><b>Hiperparametreler:</b> Hiperparametreler (100 epok, η = 0,01, c = 2, τ = 0,6, θ = 0,3) önceden sabitlenmiş, iç doğrulamayla ayarlanmamıştır. P7'de c = 1'in daha iyi sonuç verdiği görülmüştür; ana sonuçlar varsayılan c = 2 ile raporlanmıştır.</li>
+<li><b>Öznitelik seçimi:</b> Grid ANFIS'i çalıştırılabilir kılmak için öznitelik seçimi (k = 4) zorunluydu. Bu, WDBC gibi 30 öznitelikli veride bilgi kaybına yol açabilir.</li>
+<li><b>Anlamsal kısıtlar:</b> Öğrenme sırasında MF sıralaması ve kapsama korunmamıştır; bazı MF'ler daralmış veya evren dışına kaymıştır.</li>
+<li><b>Yorumlanabilirlik ölçümü:</b> Yorumlanabilirlik yalnızca nesnel metriklerle ölçülmüştür; kullanıcı çalışması yapılmamıştır. Nauck indeksi aslen Mamdani tipi sınıflandırıcılar için tanımlanmıştır ve TSK'ya uyarlanmıştır (m = sınıf sayısı).</li>
+<li><b>Gürültü ve süre ölçümleri:</b> Gürültü yalnızca test girdilerine eklenmiştir (etiket gürültüsü yok). Süreler 2 çekirdekli bir sanal makinede ölçülmüştür; mutlak değerler donanıma bağlıdır.</li>
+</ul>
+
+<h2>11. Sonuç (Conclusion)</h2>
+<p>Bu projede Ouifak ve Idri'nin [1] bulanık mantık tabanlı yorumlanabilirlik derlemesi incelenmiş, nicel analizi (Borda sıralaması) birebir yeniden üretilmiş ve derlemenin merkezî tekniği ANFIS sıfırdan gerçekleştirilerek benchmark verilerinde derleme medyanlarıyla uyumlu sonuçlar elde edilmiştir. Derlemenin belirttiği kural patlaması ve metrik eksikliği sınırlılıklarına yanıt olarak önerilen C-ANFIS, istatistiksel olarak anlamlı bir doğruluk kaybı olmadan kural sayısını %76 azaltmış, Nauck indeksini ≈6,7 kat artırmış ve yüksek boyutta grid ANFIS'e göre 100 katın üzerinde hızlanma sağlamıştır. Gürültü dayanıklılığında ve MF sayısında iyileşme sağlanamamış; bunun nedenleri tartışılmıştır. Gelecek çalışmalar için şu yönler önerilmektedir: (i) MF sıralamasını ve kapsamayı koruyan kısıtlı öğrenme, (ii) çok amaçlı (doğruluk–Nauck) hiperparametre optimizasyonu, (iii) Tip-2 MF'lerle gürültü dayanıklılığının artırılması, (iv) daha yüksek boyutlu verilerde ve kullanıcı çalışmalarıyla değerlendirme.</p>
+
+<h2>Üretken Yapay Zekâ Kullanım Beyanı (Generative AI Usage Disclosure)</h2>
+<div class="box">Bu projede üretken yapay zekâ aracı olarak Anthropic Claude kullanılmıştır. Claude, Python kodunun (ANFIS, FCM, C-ANFIS, deney ve grafik betikleri, Streamlit demosu) yazılmasında ve hata ayıklanmasında kullanılmıştır. Deney tasarımı, veri setleri ve hiperparametreler (ör. τ, θ, küme sayısı, epok sayısı) öğrenci tarafından seçilmiştir. Literatür taraması ve kaynakların seçimi öğrenci tarafından yapılmıştır. Rapor ve sunum metni öğrenci tarafından yazılmış; Claude bu metinlerde yalnızca dil düzenlemesi için kullanılmıştır. Raporda verilen tüm sayısal sonuçlar, depodaki kodun çalıştırılmasıyla üretilmiştir ve <code>results/</code> klasöründeki ham CSV dosyalarından izlenebilir. Kaynakların tamamı yayıncı/DOI kayıtları üzerinden var oldukları kontrol edilmiş gerçek yayınlardır; çoğu referans derlemenin kaynakçasından alınmıştır. Kodun, yöntemlerin ve sonuçların doğruluğu ile açıklanabilirliği öğrencinin sorumluluğundadır.</div>
+
+<h2>Kaynakça (References)</h2>
+<ol class="refs">
+<li>H. Ouifak and A. Idri, "A comprehensive review of fuzzy logic based interpretability and explainability of machine learning techniques across domains," <i>Neurocomputing</i>, vol. 647, Art. no. 130602, 2025, doi: 10.1016/j.neucom.2025.130602.</li>
+<li>A. Barredo Arrieta <i>et al.</i>, "Explainable artificial intelligence (XAI): Concepts, taxonomies, opportunities and challenges toward responsible AI," <i>Inf. Fusion</i>, vol. 58, pp. 82–115, 2020.</li>
+<li>Z. C. Lipton, "The mythos of model interpretability," <i>Commun. ACM</i>, vol. 61, no. 10, pp. 36–43, 2018, doi: 10.1145/3233231.</li>
+<li>L. Magdalena, "Fuzzy systems interpretability: What, why and how," in <i>Stud. Fuzziness Soft Comput.</i>, vol. 394, Springer, 2021, pp. 111–122.</li>
+<li>L. A. Zadeh, "Fuzzy sets," <i>Inf. Control</i>, vol. 8, no. 3, pp. 338–353, 1965.</li>
+<li>J.-S. R. Jang, "ANFIS: Adaptive-network-based fuzzy inference system," <i>IEEE Trans. Syst., Man, Cybern.</i>, vol. 23, no. 3, pp. 665–685, 1993, doi: 10.1109/21.256541.</li>
+<li>M. J. Gacto, R. Alcalá, and F. Herrera, "Interpretability of linguistic fuzzy rule-based systems: An overview of interpretability measures," <i>Inf. Sci.</i>, vol. 181, no. 20, pp. 4340–4360, 2011, doi: 10.1016/j.ins.2011.02.021.</li>
+<li>J. M. Alonso, C. Castiello, and C. Mencar, "Interpretability of fuzzy systems: Current research trends and prospects," in <i>Springer Handbook of Computational Intelligence</i>, Springer, 2015, pp. 219–237, doi: 10.1007/978-3-662-43505-2_14.</li>
+<li>R. Das, S. Sen, and U. Maulik, "A survey on fuzzy deep neural networks," <i>ACM Comput. Surv.</i>, vol. 53, no. 3, 2020, doi: 10.1145/3369798.</li>
+<li>P. V. de Campos Souza, "Fuzzy neural networks and neuro-fuzzy networks: A review the main techniques and applications used in the literature," <i>Appl. Soft Comput.</i>, vol. 92, Art. no. 106275, 2020, doi: 10.1016/j.asoc.2020.106275.</li>
+<li>F. Aghaeipoor, M. Sabokrou, and A. Fernández, "Fuzzy rule-based explainer systems for deep neural networks: From local explainability to global understanding," <i>IEEE Trans. Fuzzy Syst.</i>, vol. 31, no. 9, pp. 3069–3080, 2023, doi: 10.1109/TFUZZ.2023.3243935.</li>
+<li>F. Yin, H.-K. Lam, and D. Watson, "Hierarchical fuzzy model-agnostic explanation: Framework, algorithms and interface for XAI," <i>IEEE Trans. Fuzzy Syst.</i>, vol. 33, no. 2, pp. 549–558, 2025.</li>
+<li>M. T. Ribeiro, S. Singh, and C. Guestrin, "'Why should I trust you?': Explaining the predictions of any classifier," in <i>Proc. 22nd ACM SIGKDD Int. Conf. Knowl. Discov. Data Min.</i>, 2016, pp. 1135–1144.</li>
+<li>S. M. Lundberg and S.-I. Lee, "A unified approach to interpreting model predictions," in <i>Adv. Neural Inf. Process. Syst. 30</i>, 2017, pp. 4765–4774.</li>
+<li>M. W. Craven and J. W. Shavlik, "Extracting tree-structured representations of trained networks," in <i>Adv. Neural Inf. Process. Syst. 8</i>, 1996, pp. 24–30.</li>
+<li>Y. Huang, D. Chen, W. Zhao, and Y. Lv, "Fuzzy C-means clustering based deep patch learning with improved interpretability for classification problems," <i>IEEE Access</i>, vol. 10, pp. 49873–49891, 2022, doi: 10.1109/ACCESS.2022.3171109.</li>
+<li>C. Fuchs, U. Kaymak, and M. S. Nobile, "Building interpretable and parsimonious fuzzy models using a multi-objective approach," in <i>Proc. IEEE Int. Conf. Fuzzy Syst. (FUZZ-IEEE)</i>, 2022, doi: 10.1109/FUZZ-IEEE55066.2022.9882755.</li>
+<li>H. Ouifak and A. Idri, "On the performance and interpretability of Mamdani and Takagi-Sugeno-Kang based neuro-fuzzy systems for medical diagnosis," <i>Sci. Afr.</i>, vol. 20, Art. no. e01610, 2023, doi: 10.1016/j.sciaf.2023.e01610.</li>
+<li>D. Pekaslan, C. Chen, C. Wagner, and J. M. Garibaldi, "Performance and interpretability in fuzzy logic systems – Can we have both?," in <i>Commun. Comput. Inf. Sci.</i>, vol. 1237, Springer, 2020, pp. 571–584, doi: 10.1007/978-3-030-50146-4_42.</li>
+<li>Y. Cui, D. Wu, and Y. Xu, "Curse of dimensionality for TSK fuzzy neural networks: Explanation and solutions," in <i>Proc. Int. Joint Conf. Neural Netw. (IJCNN)</i>, 2021, pp. 1–8.</li>
+<li>D. Wu, C.-T. Lin, J. Huang, and Z. Zeng, "On the functional equivalence of TSK fuzzy systems to neural networks, mixture of experts, CART, and stacking ensemble regression," <i>IEEE Trans. Fuzzy Syst.</i>, vol. 28, no. 10, pp. 2570–2580, 2020.</li>
+<li>M. Setnes, R. Babuška, U. Kaymak, and H. R. van Nauta Lemke, "Similarity measures in fuzzy rule base simplification," <i>IEEE Trans. Syst., Man, Cybern. B</i>, vol. 28, no. 3, pp. 376–386, 1998.</li>
+<li>S. L. Chiu, "Fuzzy model identification based on cluster estimation," <i>J. Intell. Fuzzy Syst.</i>, vol. 2, no. 3, pp. 267–278, 1994.</li>
+<li>D. D. Nauck, "Measuring interpretability in rule-based classification systems," in <i>Proc. 12th IEEE Int. Conf. Fuzzy Syst. (FUZZ-IEEE)</i>, 2003, vol. 1, pp. 196–201.</li>
+<li>E. H. Mamdani and S. Assilian, "An experiment in linguistic synthesis with a fuzzy logic controller," <i>Int. J. Man-Mach. Stud.</i>, vol. 7, no. 1, pp. 1–13, 1975.</li>
+<li>T. Takagi and M. Sugeno, "Fuzzy identification of systems and its applications to modeling and control," <i>IEEE Trans. Syst., Man, Cybern.</i>, vol. SMC-15, no. 1, pp. 116–132, 1985.</li>
+<li>J. C. Bezdek, <i>Pattern Recognition with Fuzzy Objective Function Algorithms</i>. New York, NY, USA: Plenum Press, 1981.</li>
+<li>D. P. Kingma and J. Ba, "Adam: A method for stochastic optimization," in <i>Proc. Int. Conf. Learn. Represent. (ICLR)</i>, 2015.</li>
+<li>L.-X. Wang and J. M. Mendel, "Generating fuzzy rules by learning from examples," <i>IEEE Trans. Syst., Man, Cybern.</i>, vol. 22, no. 6, pp. 1414–1427, 1992.</li>
+<li>H. Ishibuchi, K. Nozaki, N. Yamamoto, and H. Tanaka, "Selecting fuzzy if-then rules for classification problems using genetic algorithms," <i>IEEE Trans. Fuzzy Syst.</i>, vol. 3, no. 3, pp. 260–270, 1995.</li>
+<li>R. A. Fisher, "The use of multiple measurements in taxonomic problems," <i>Ann. Eugenics</i>, vol. 7, no. 2, pp. 179–188, 1936.</li>
+<li>W. N. Street, W. H. Wolberg, and O. L. Mangasarian, "Nuclear feature extraction for breast tumor diagnosis," in <i>Proc. SPIE</i>, vol. 1905, 1993, pp. 861–870.</li>
+<li>J. W. Smith, J. E. Everhart, W. C. Dickson, W. C. Knowler, and R. S. Johannes, "Using the ADAP learning algorithm to forecast the onset of diabetes mellitus," in <i>Proc. Annu. Symp. Comput. Appl. Med. Care</i>, 1988, pp. 261–265.</li>
+<li>J. Demšar, "Statistical comparisons of classifiers over multiple data sets," <i>J. Mach. Learn. Res.</i>, vol. 7, pp. 1–30, 2006.</li>
+<li>F. Pedregosa <i>et al.</i>, "Scikit-learn: Machine learning in Python," <i>J. Mach. Learn. Res.</i>, vol. 12, pp. 2825–2830, 2011.</li>
+<li>G. A. Miller, "The magical number seven, plus or minus two: Some limits on our capacity for processing information," <i>Psychol. Rev.</i>, vol. 63, no. 2, pp. 81–97, 1956.</li>
+</ol>
+</body>
+</html>
