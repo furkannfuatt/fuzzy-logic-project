@@ -119,7 +119,7 @@ python -m experiments.baseline.r1_borda_reproduction    # R1
 python -m experiments.baseline.r2_r3_baseline           # R2 + R3 (baseline)
 python -m experiments.proposed.p_canfis_experiments     # P1–P7 (önerilen)
 python -m experiments.make_figures                      # results/figures/*.png
-node presentation/build_presentation.js                 # sunum (pptxgenjs)
+python presentation/build_presentation.py              # sunum (python-pptx)
 ```
 
 ## Reproduction Experiments
@@ -164,7 +164,7 @@ fuzzy-logic-project/
 ├── results/figures/      *.png       results/tables/  *.csv, example_rules_wdbc.txt
 ├── demo/app.py           Streamlit canlı demo
 ├── tests/test_anfis.py   gradyan doğrulama
-├── presentation/         presentation.pptx · presentation.pdf · build_presentation.js
+├── presentation/         presentation.pptx · presentation.pdf · build_presentation.py · speaker_notes.json
 ├── report/               report.pdf · report.html (kaynak)
 └── references/README.md
 ```
