@@ -99,8 +99,9 @@ pip install -r requirements.txt
 
 Test edilen ortamlar:
 
-- Python 3.13, numpy 2.5, scipy 1.18, pandas 3.0, scikit-learn 1.9, matplotlib 3.11, streamlit 1.65 (raporlanan sonuçlar bu ortamda üretildi).
-- Python 3.10, numpy 2.2, scikit-learn 1.7, pandas 2.3 (macOS üzerinde Linux VM): testler ve R1 birebir aynı sonucu verdi. C-ANFIS doğruluğu kütüphane sürümü farkından dolayı ±0,2 puan oynayabilir (ör. WDBC: 92,79 → 92,97). Grid-ANFIS sonuçları birebir aynı çıktı.
+- Python 3.13, numpy 2.5, scipy 1.18, pandas 3.0, scikit-learn 1.9, matplotlib 3.11, streamlit 1.65, **Linux** (OpenBLAS). Raporlanan sonuçlar bu ortamda üretildi.
+- Python 3.10, numpy 2.2, scikit-learn 1.7, pandas 2.3 (macOS üzerinde Linux VM): testler ve R1 birebir aynı sonucu verdi. C-ANFIS doğruluğu ±0,2 puan oynayabilir (ör. WDBC: 92,79 → 92,97).
+- Python 3.12 / 3.13, aynı kütüphane sürümleri, **macOS (Apple Silicon)**: testler, R1 ve R2 medyan karşılaştırması birebir aynı çıktı. macOS'taki numpy, OpenBLAS yerine Apple Accelerate kullandığından kayan nokta farkları oluşur. Bu farklar, sayısal olarak hassas modellerde (Grid-ANFIS 3MF, C-ANFIS ve varyantları) 330 kattan 11'inde farklı bir sonuca yol açar. Örneğin genel C-ANFIS − Grid-ANFIS (2MF) farkı −0,84 puan (p = 0,152) yerine −0,76 puan (p = 0,124), Pima'da C-ANFIS − Grid-ANFIS (3MF) farkı +5,34 (p = 0,022) yerine +4,69 (p = 0,027) olarak ölçülür. **Rapordaki sonuçların hiçbiri değişmez:** genel doğruluk farkı anlamsız, Pima'daki 3MF farkı anlamlı kalır. Kod deterministiktir; aynı platformda tekrarlanan çalıştırmalar birebir aynı sonucu verir.
 
 GPU gerekmez. Süre ölçümleri donanıma bağlıdır.
 
@@ -145,7 +146,7 @@ Grid-ANFIS (2MF) ve C-ANFIS karşılaştırması (3 veri seti × 10 kat, eşleş
 | Execution time — eğitim (s/kat) | 0,121 | 0,100 | −%17 |
 | Execution time — çıkarım (ms/örnek) | 0,0045 | 0,0030 | −%33 |
 
-- **Ölçeklenebilirlik (k = 8):** Grid-ANFIS 256 kural kullanır ve bir kat ≈21 s sürer. C-ANFIS ise 3–4 kuralla ≈0,15 s'de eğitilir; bu **122–161 kat** daha hızlıdır. Pima'da doğruluk %66,2'ye karşı **%74,2**'dir.
+- **Ölçeklenebilirlik (k = 8):** Grid-ANFIS 256 kural kullanır ve bir kat ≈21 s sürer. C-ANFIS ise 2,6–3,6 kuralla 0,13–0,18 s'de eğitilir; bu **122–161 kat** daha hızlıdır. Pima'da doğruluk %66,2'ye karşı **%74,2**'dir.
 - **Ablation:** Kazancın asıl kaynağı FCM ile kural üretimidir. Nauck indeksi her adımda artar.
 - **Gürültü:** İyileşme yoktur (σ = 0,1'de −1,8 puan, p = 0,21). Olası nedenler raporun Bölüm 9'unda tartışılmıştır.
 
